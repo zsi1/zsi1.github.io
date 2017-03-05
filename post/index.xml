@@ -158,5 +158,71 @@ boxplot(proportions,main=&amp;quot;Boxplot of Two Average Proportions&amp;quot;)
 </description>
     </item>
     
+    <item>
+      <title>Mar-6, 2017 -Pre-Assiganment</title>
+      <link>https://zsi1.github.io/post/mar-6-2017-pre-assiganment/</link>
+      <pubDate>Sun, 05 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://zsi1.github.io/post/mar-6-2017-pre-assiganment/</guid>
+      <description>&lt;!-- BLOGDOWN-HEAD --&gt;
+&lt;!-- /BLOGDOWN-HEAD --&gt;
+
+&lt;!-- BLOGDOWN-BODY-BEFORE --&gt;
+&lt;!-- /BLOGDOWN-BODY-BEFORE --&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mean.jackknife&amp;lt;-function(x){
+est.jackknife&amp;lt;-rep(NA,length(x))  
+  for (i in 1:length(x)){
+    est.jackknife[i]&amp;lt;-mean(x[-i])
+  } 
+  n&amp;lt;-length(x)
+  jackknife.var&amp;lt;-((n-1)^2/n)*var(est.jackknife)
+  jackknife.stderr&amp;lt;-sqrt(jackknife.var)
+  return(jackknife.stderr) 
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;some_normals &amp;lt;- rnorm(100,mean=7,sd=5)
+mean(some_normals)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 7.031204&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;(formula_se_of_mean &amp;lt;- sd(some_normals)/sqrt(length(some_normals)))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 0.5247049&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all.equal(formula_se_of_mean,mean.jackknife(some_normals))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] TRUE&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mean.jackknife(some_normals)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 0.5247049&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>March 7, 2017-Pre-Class Assignment</title>
+      <link>https://zsi1.github.io/post/march-7-2017-pre-class-assignment/</link>
+      <pubDate>Sun, 05 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://zsi1.github.io/post/march-7-2017-pre-class-assignment/</guid>
+      <description>&lt;!-- BLOGDOWN-HEAD --&gt;
+&lt;!-- /BLOGDOWN-HEAD --&gt;
+
+&lt;!-- BLOGDOWN-BODY-BEFORE --&gt;
+&lt;!-- /BLOGDOWN-BODY-BEFORE --&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mean.jackknife&amp;lt;-function(x){
+est.jackknife&amp;lt;-rep(NA,length(x))  
+  for (i in 1:length(x)){
+    est.jackknife[i]&amp;lt;-mean(x[-i])
+  } 
+  n&amp;lt;-length(x)
+  jackknife.var&amp;lt;-((n-1)^2/n)*var(est.jackknife)
+  jackknife.stderr&amp;lt;-sqrt(jackknife.var)
+  return(jackknife.stderr) 
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;some_normals &amp;lt;- rnorm(100,mean=7,sd=5)
+mean(some_normals)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 6.510265&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;(formula_se_of_mean &amp;lt;- sd(some_normals)/sqrt(length(some_normals)))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 0.478992&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all.equal(formula_se_of_mean,mean.jackknife(some_normals))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] TRUE&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mean.jackknife(some_normals)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 0.478992&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
   </channel>
 </rss>

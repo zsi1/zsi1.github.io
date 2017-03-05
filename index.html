@@ -353,6 +353,13 @@
     <h1>Recent Posts</h1>
     
     
+    <p class="view-all">
+      <a href="/post/">
+        More Posts
+        <i class="fa fa-angle-double-right"></i>
+      </a>
+    </p>
+    
 
   </div>
   <div class="col-xs-12 col-md-8">
@@ -397,6 +404,71 @@
   </div>
   <p class="read-more">
     <a href="https://zsi1.github.io/post/feb-28-2016-in-class-project/" class="btn btn-primary btn-outline">
+      CONTINUE READING
+    </a>
+  </p>
+</div>
+
+      
+        
+        
+
+
+<div class="article-list-item" itemscope itemprop="blogPost">
+  
+  
+  <h3 class="article-title" itemprop="name">
+    <a href="https://zsi1.github.io/post/mar-6-2017-pre-assiganment/" itemprop="url">Mar-6, 2017 -Pre-Assiganment</a>
+  </h3>
+  
+
+<div class="article-metadata">
+
+  <span class="article-date">
+    <time datetime="2017-03-05 00:00:00 &#43;0000 UTC" itemprop="datePublished">
+      Sun, Mar 5, 2017
+    </time>
+  </span>
+
+  
+
+  
+
+  
+
+</div>
+
+  <div class="article-style" itemprop="articleBody">
+    
+    <!-- BLOGDOWN-HEAD -->
+<!-- /BLOGDOWN-HEAD -->
+
+<!-- BLOGDOWN-BODY-BEFORE -->
+<!-- /BLOGDOWN-BODY-BEFORE -->
+<pre class="r"><code>mean.jackknife&lt;-function(x){
+est.jackknife&lt;-rep(NA,length(x))  
+  for (i in 1:length(x)){
+    est.jackknife[i]&lt;-mean(x[-i])
+  } 
+  n&lt;-length(x)
+  jackknife.var&lt;-((n-1)^2/n)*var(est.jackknife)
+  jackknife.stderr&lt;-sqrt(jackknife.var)
+  return(jackknife.stderr) 
+}</code></pre>
+<pre class="r"><code>some_normals &lt;- rnorm(100,mean=7,sd=5)
+mean(some_normals)</code></pre>
+<pre><code>## [1] 7.031204</code></pre>
+<pre class="r"><code>(formula_se_of_mean &lt;- sd(some_normals)/sqrt(length(some_normals)))</code></pre>
+<pre><code>## [1] 0.5247049</code></pre>
+<pre class="r"><code>all.equal(formula_se_of_mean,mean.jackknife(some_normals))</code></pre>
+<pre><code>## [1] TRUE</code></pre>
+<pre class="r"><code>mean.jackknife(some_normals)</code></pre>
+<pre><code>## [1] 0.5247049</code></pre>
+
+    
+  </div>
+  <p class="read-more">
+    <a href="https://zsi1.github.io/post/mar-6-2017-pre-assiganment/" class="btn btn-primary btn-outline">
       CONTINUE READING
     </a>
   </p>

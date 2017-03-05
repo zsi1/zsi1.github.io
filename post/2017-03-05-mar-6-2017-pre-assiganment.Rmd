@@ -1,0 +1,28 @@
+---
+title: Mar-6, 2017 -Pre-Assiganment
+date: '2017-03-05'
+slug: mar-6-2017-pre-assiganment
+---
+
+```{r}
+mean.jackknife<-function(x){
+est.jackknife<-rep(NA,length(x))  
+  for (i in 1:length(x)){
+    est.jackknife[i]<-mean(x[-i])
+  } 
+  n<-length(x)
+  jackknife.var<-((n-1)^2/n)*var(est.jackknife)
+  jackknife.stderr<-sqrt(jackknife.var)
+  return(jackknife.stderr) 
+}
+```
+
+
+```{r}
+some_normals <- rnorm(100,mean=7,sd=5)
+mean(some_normals)
+(formula_se_of_mean <- sd(some_normals)/sqrt(length(some_normals)))
+all.equal(formula_se_of_mean,mean.jackknife(some_normals))
+
+mean.jackknife(some_normals)
+```
