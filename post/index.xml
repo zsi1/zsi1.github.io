@@ -2,100 +2,159 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on Zheng Si, Mac</title>
-    <link>/post/index.xml</link>
+    <link>https://zsi1.github.io/post/index.xml</link>
     <description>Recent content in Posts on Zheng Si, Mac</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2016 Your Name</copyright>
-    <lastBuildDate>Fri, 30 Dec 2016 21:49:57 -0700</lastBuildDate>
+    <lastBuildDate>Sun, 05 Mar 2017 00:00:00 +0000</lastBuildDate>
     <atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>A Plain Markdown Post</title>
-      <link>/post/2016-12-30-hello-markdown/</link>
-      <pubDate>Fri, 30 Dec 2016 21:49:57 -0700</pubDate>
+      <title>Feb, 28, 2016 -In-Class Project</title>
+      <link>https://zsi1.github.io/post/feb-28-2016-in-class-project/</link>
+      <pubDate>Sun, 05 Mar 2017 00:00:00 +0000</pubDate>
       
-      <guid>/post/2016-12-30-hello-markdown/</guid>
-      <description>&lt;p&gt;This is a post written in plain Markdown (&lt;code&gt;*.md&lt;/code&gt;) instead of R Markdown (&lt;code&gt;*.Rmd&lt;/code&gt;). The major differences are:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;You cannot run any R code in a plain Markdown document, whereas in an R Markdown document, you can embed R code chunks (&lt;code&gt;```{r}&lt;/code&gt;);&lt;/li&gt;
-&lt;li&gt;A plain Markdown post is rendered through &lt;a href=&#34;https://gohugo.io/overview/configuration/&#34; target=&#34;_blank&#34;&gt;Blackfriday&lt;/a&gt;, and an R Markdown document is compiled by &lt;a href=&#34;http://rmarkdown.rstudio.com&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;rmarkdown&lt;/strong&gt;&lt;/a&gt; and &lt;a href=&#34;http://pandoc.org&#34; target=&#34;_blank&#34;&gt;Pandoc&lt;/a&gt;.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;There are many differences in syntax between Blackfriday&amp;rsquo;s Markdown and Pandoc&amp;rsquo;s Markdown. For example, you can write a task list with Blackfriday but not with Pandoc:&lt;/p&gt;
-
-&lt;ul class=&#34;task-list&#34;&gt;
-&lt;li&gt;&lt;input type=&#34;checkbox&#34; checked disabled class=&#34;task-list-item&#34;&gt; Write an R package.&lt;/li&gt;
-&lt;li&gt;&lt;input type=&#34;checkbox&#34; disabled class=&#34;task-list-item&#34;&gt; Write a book.&lt;/li&gt;
-&lt;li&gt;&lt;input type=&#34;checkbox&#34; disabled class=&#34;task-list-item&#34;&gt; &amp;hellip;&lt;/li&gt;
-&lt;li&gt;&lt;input type=&#34;checkbox&#34; disabled class=&#34;task-list-item&#34;&gt; Profit!&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Similarly, Blackfriday does not support LaTeX math and Pandoc does. I have added the MathJax support to this theme (&lt;a href=&#34;https://github.com/yihui/hugo-lithium-theme&#34; target=&#34;_blank&#34;&gt;hugo-lithium-theme&lt;/a&gt;) but there is a caveat for plain Markdown posts: you have to include inline math expressions in  a pair of escaped parentheses &lt;code&gt;\( \)&lt;/code&gt; instead of dollar signs &lt;code&gt;$ $&lt;/code&gt;, e.g. &lt;code&gt;\(S_n = \sum_{i=1}^n X_i\)&lt;/code&gt;. For R Markdown posts, you can use &lt;code&gt;$ $&lt;/code&gt; to write inline math expressions.&lt;/p&gt;
-
-&lt;p&gt;When creating a new post, you have to decide whether the post format is Markdown or R Markdown, and this can be done via the &lt;code&gt;rmd&lt;/code&gt; argument of the function &lt;code&gt;blogdown::new_post()&lt;/code&gt;, e.g.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;blogdown::new_post(&amp;quot;Post Title&amp;quot;, rmd = FALSE)
-&lt;/code&gt;&lt;/pre&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Hello R Markdown</title>
-      <link>/post/2015-07-23-r-rmarkdown/</link>
-      <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
-      
-      <guid>/post/2015-07-23-r-rmarkdown/</guid>
-      <description>&lt;div id=&#34;r-markdown&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;R Markdown&lt;/h1&gt;
-&lt;p&gt;This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see &lt;a href=&#34;http://rmarkdown.rstudio.com&#34; class=&#34;uri&#34;&gt;http://rmarkdown.rstudio.com&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;You can embed an R code chunk like this:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;summary(cars)
-##      speed           dist       
-##  Min.   : 4.0   Min.   :  2.00  
-##  1st Qu.:12.0   1st Qu.: 26.00  
-##  Median :15.0   Median : 36.00  
-##  Mean   :15.4   Mean   : 42.98  
-##  3rd Qu.:19.0   3rd Qu.: 56.00  
-##  Max.   :25.0   Max.   :120.00
-fit &amp;lt;- lm(dist ~ speed, data = cars)
-fit
-## 
-## Call:
-## lm(formula = dist ~ speed, data = cars)
-## 
-## Coefficients:
-## (Intercept)        speed  
-##     -17.579        3.932&lt;/code&gt;&lt;/pre&gt;
+      <guid>https://zsi1.github.io/post/feb-28-2016-in-class-project/</guid>
+      <description>&lt;div id=&#34;section&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;1&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ckm_nodes&amp;lt;-read.csv(&amp;quot;~/Desktop/Brown_Course/2560/ckm_nodes.csv&amp;quot;,header = TRUE)
+dim(ckm_nodes)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 246  13&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;colnames(ckm_nodes)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  [1] &amp;quot;city&amp;quot;                         &amp;quot;adoption_date&amp;quot;               
+##  [3] &amp;quot;medical_school&amp;quot;               &amp;quot;attend_meetings&amp;quot;             
+##  [5] &amp;quot;medical_journals&amp;quot;             &amp;quot;free_time_with&amp;quot;              
+##  [7] &amp;quot;discuss_medicine_socially&amp;quot;    &amp;quot;club_with_drs&amp;quot;               
+##  [9] &amp;quot;drs_among_three_best_friends&amp;quot; &amp;quot;practicing_here&amp;quot;             
+## [11] &amp;quot;office_visits_per_week&amp;quot;       &amp;quot;proximity_to_other_drs&amp;quot;      
+## [13] &amp;quot;specialty&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There are 246 rows and 13 columns in this ckm_nodes data file and there are columns named city and adoption_date.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;including-plots&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Including Plots&lt;/h1&gt;
-&lt;p&gt;You can also embed plots. See Figure &lt;a href=&#34;#fig:pie&#34;&gt;1&lt;/a&gt; for example:&lt;/p&gt;
-&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;par(mar = c(0, 1, 0, 1))
-pie(
-  c(280, 60, 20),
-  c(&amp;#39;Sky&amp;#39;, &amp;#39;Sunny side of pyramid&amp;#39;, &amp;#39;Shady side of pyramid&amp;#39;),
-  col = c(&amp;#39;#0292D8&amp;#39;, &amp;#39;#F7EA39&amp;#39;, &amp;#39;#C4B632&amp;#39;),
-  init.angle = -50, border = NA
-)&lt;/code&gt;&lt;/pre&gt;
-&lt;div class=&#34;figure&#34;&gt;&lt;span id=&#34;fig:pie&#34;&gt;&lt;/span&gt;
-&lt;img src=&#34;/post/2015-07-23-r-rmarkdown_files/figure-html/pie-1.png&#34; alt=&#34;A fancy pie chart.&#34; width=&#34;672&#34; /&gt;
-&lt;p class=&#34;caption&#34;&gt;
-Figure 1: A fancy pie chart.
-&lt;/p&gt;
+&lt;div id=&#34;section-1&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;2&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;table(ckm_nodes$adoption_date)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+##   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17 Inf 
+##  11   9   9  11  11  11  13   7   4   1   5   3   3   4   4   2   1  16&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;There are 16 doctors never prescribed. There are 121 missing records.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;length(which(is.na(ckm_nodes$adoption_date)))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 121&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#summary(ckm_nodes$adoption_date)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;section-2&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;3&lt;/h2&gt;
+&lt;p&gt;A vector called index includes all index of doctor, and the length is 125.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;index&amp;lt;-which(!is.na(ckm_nodes$adoption_date))
+length(index)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 125&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;cleaned_nodes&amp;lt;-ckm_nodes[index,]&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;section-3&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;4&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;adopters&amp;lt;-function(month,not.yet=FALSE){
+  if(not.yet==FALSE){ 
+  return(as.vector(cleaned_nodes$adoption_date==month))
+  } else {
+  return(as.vector(cleaned_nodes$adoption_date&amp;gt;month))  
+  }
+}
+adopters(2)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##   [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE
+##  [12] FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE
+##  [23] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+##  [34] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+##  [45] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+##  [56]  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+##  [67] FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE  TRUE  TRUE FALSE
+##  [78] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE
+##  [89] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [100] FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE
+## [111] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+## [122] FALSE FALSE FALSE FALSE&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sum(adopters(2))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 9&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;sum(adopters(month=14,not.yet = TRUE))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 23&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;section-4&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;5&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ckm_network&amp;lt;-read.table(&amp;quot;~/Desktop/Brown_Course/2560/ckm_network.dat&amp;quot;,header= FALSE, sep=&amp;quot;&amp;quot;)
+clean_networks&amp;lt;-ckm_network[index,index]
+dim(clean_networks)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 125 125&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;section-5&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;6&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;contacts_number&amp;lt;-apply(clean_networks, 1, sum)
+contacts_number[41]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 70 
+##  3&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;part-2&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Part 2&lt;/h3&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Lorem Ipsum</title>
-      <link>/post/2015-01-01-lorem-ipsum/</link>
-      <pubDate>Thu, 01 Jan 2015 13:09:13 -0600</pubDate>
-      
-      <guid>/post/2015-01-01-lorem-ipsum/</guid>
-      <description>&lt;p&gt;&lt;strong&gt;Lorem ipsum&lt;/strong&gt; dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore &lt;em&gt;magna aliqua&lt;/em&gt;. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.&lt;/p&gt;
+&lt;div id=&#34;section-6&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;7&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;count_peer_pressure&amp;lt;-function(index,month){
+  sum(cleaned_nodes[which(clean_networks[index]==1),2]&amp;lt;=month)
+}
+count_peer_pressure(37,5)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 3&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;###
+prop_peer_pressure&amp;lt;-function(index,month){
+  if(contacts_number[index]==0){
+    return(NaN)
+  } else {
+    return(count_peer_pressure(index,month)/contacts_number[index])
+  }
+}
+
+prop_peer_pressure(37,5)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  37 
+## 0.6&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;prop_peer_pressure(102,4)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] NaN&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;section-7&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;8&lt;/h2&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;average&amp;lt;-function(month){
+  vector&amp;lt;-rep(NA,2)
+  #began prescribing in that month
+  began&amp;lt;-which(adopters(month,not.yet =FALSE)==TRUE) #docs who began prescribing
+  began&amp;lt;-as.matrix(began)
+  proportion_1&amp;lt;-apply(began,1,prop_peer_pressure,month=month)
+  #after prescribing in that month
+  after&amp;lt;-which(adopters(month,not.yet = TRUE))
+  after&amp;lt;-as.matrix(as.numeric(after))
+  proportion_2&amp;lt;-apply(after,1,prop_peer_pressure,month=month)
+  vector[1]&amp;lt;-mean(proportion_1,na.rm=T)
+  vector[2]&amp;lt;-mean(proportion_2,na.rm=T)
+  return(vector)
+}
+
+average(1)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 0.2318182 0.0787518&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;b&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;month&amp;lt;-c(1:17)
+month&amp;lt;-as.matrix(month)
+average_month&amp;lt;-apply(month,1,average)
+average_month_1&amp;lt;-average_month[1,]
+average_month_2&amp;lt;-average_month[2,]
+
+plot(month,average_month_1,main=&amp;quot;Average Proportion Over Time&amp;quot;,xlab=&amp;quot;Month&amp;quot;,ylab=&amp;quot;Average Proportion&amp;quot;,col=&amp;quot;green&amp;quot;,type=&amp;quot;o&amp;quot;,xaxt=&amp;quot;n&amp;quot;,yaxt=&amp;quot;n&amp;quot;)
+axis(1,at=seq(1,17,1),labels = T)
+axis(2,at=seq(0,1,0.1),labels = T)
+points(average_month_2,col=&amp;quot;red&amp;quot;,type=&amp;quot;o&amp;quot;)
+legend(&amp;quot;topleft&amp;quot;,c(&amp;quot;First Proportion&amp;quot;,&amp;quot;Second Proportion&amp;quot;),col=c(&amp;quot;green&amp;quot;,&amp;quot;red&amp;quot;),lty=c(1,1),bty=&amp;quot;n&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://zsi1.github.io/post/2017-03-05-feb-28-2016-in-class-project_files/figure-html/unnamed-chunk-11-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#the difference of two proportions in 8a
+proportions&amp;lt;-apply(month,1,average)
+proportions&amp;lt;-t(proportions)
+boxplot(proportions,main=&amp;quot;Boxplot of Two Average Proportions&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;img src=&#34;https://zsi1.github.io/post/2017-03-05-feb-28-2016-in-class-project_files/figure-html/unnamed-chunk-12-1.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The doctors who adopt in a given month sometimes don’t have more contacts who are already prescribing than the non-adopters.&lt;/p&gt;
+&lt;/div&gt;
 </description>
     </item>
     

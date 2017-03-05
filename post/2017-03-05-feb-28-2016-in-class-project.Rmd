@@ -1,0 +1,131 @@
+---
+title: Feb, 28, 2016 -In-Class Project
+date: '2017-03-05'
+slug: feb-28-2016-in-class-project
+---
+
+##1
+```{r}
+ckm_nodes<-read.csv("~/Desktop/Brown_Course/2560/ckm_nodes.csv",header = TRUE)
+dim(ckm_nodes)
+colnames(ckm_nodes)
+```
+There are 246 rows and 13 columns in this ckm_nodes data file and there are columns named city and adoption_date.
+
+##2
+```{r}
+table(ckm_nodes$adoption_date)
+```
+
+There are 16 doctors never prescribed. There are 121 missing records. 
+```{r}
+length(which(is.na(ckm_nodes$adoption_date)))
+#summary(ckm_nodes$adoption_date)
+```
+
+##3
+A vector called index includes all index of doctor, and the length is 125. 
+```{r}
+index<-which(!is.na(ckm_nodes$adoption_date))
+length(index)
+cleaned_nodes<-ckm_nodes[index,]
+```
+
+##4
+```{r}
+adopters<-function(month,not.yet=FALSE){
+  if(not.yet==FALSE){ 
+  return(as.vector(cleaned_nodes$adoption_date==month))
+  } else {
+  return(as.vector(cleaned_nodes$adoption_date>month))  
+  }
+}
+adopters(2)
+sum(adopters(2))
+sum(adopters(month=14,not.yet = TRUE))
+```
+
+##5
+```{r}
+ckm_network<-read.table("~/Desktop/Brown_Course/2560/ckm_network.dat",header= FALSE, sep="")
+clean_networks<-ckm_network[index,index]
+dim(clean_networks)
+```
+
+##6
+```{r}
+contacts_number<-apply(clean_networks, 1, sum)
+contacts_number[41]
+```
+
+###Part 2
+
+##7
+```{r}
+count_peer_pressure<-function(index,month){
+  sum(cleaned_nodes[which(clean_networks[index]==1),2]<=month)
+}
+count_peer_pressure(37,5)
+```
+
+
+```{r}
+###
+prop_peer_pressure<-function(index,month){
+  if(contacts_number[index]==0){
+    return(NaN)
+  } else {
+    return(count_peer_pressure(index,month)/contacts_number[index])
+  }
+}
+
+prop_peer_pressure(37,5)
+prop_peer_pressure(102,4)
+```
+
+##8
+
+```{r}
+average<-function(month){
+  vector<-rep(NA,2)
+  #began prescribing in that month
+  began<-which(adopters(month,not.yet =FALSE)==TRUE) #docs who began prescribing
+  began<-as.matrix(began)
+  proportion_1<-apply(began,1,prop_peer_pressure,month=month)
+  #after prescribing in that month
+  after<-which(adopters(month,not.yet = TRUE))
+  after<-as.matrix(as.numeric(after))
+  proportion_2<-apply(after,1,prop_peer_pressure,month=month)
+  vector[1]<-mean(proportion_1,na.rm=T)
+  vector[2]<-mean(proportion_2,na.rm=T)
+  return(vector)
+}
+
+average(1)
+```
+
+
+b
+```{r}
+month<-c(1:17)
+month<-as.matrix(month)
+average_month<-apply(month,1,average)
+average_month_1<-average_month[1,]
+average_month_2<-average_month[2,]
+
+plot(month,average_month_1,main="Average Proportion Over Time",xlab="Month",ylab="Average Proportion",col="green",type="o",xaxt="n",yaxt="n")
+axis(1,at=seq(1,17,1),labels = T)
+axis(2,at=seq(0,1,0.1),labels = T)
+points(average_month_2,col="red",type="o")
+legend("topleft",c("First Proportion","Second Proportion"),col=c("green","red"),lty=c(1,1),bty="n")
+```
+
+
+```{r}
+#the difference of two proportions in 8a
+proportions<-apply(month,1,average)
+proportions<-t(proportions)
+boxplot(proportions,main="Boxplot of Two Average Proportions")
+```
+
+The doctors who adopt in a given month sometimes don't have more contacts who are already prescribing than the non-adopters. 
