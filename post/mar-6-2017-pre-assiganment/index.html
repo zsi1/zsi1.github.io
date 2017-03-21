@@ -213,13 +213,13 @@ est.jackknife&lt;-rep(NA,length(x))
 }</code></pre>
 <pre class="r"><code>some_normals &lt;- rnorm(100,mean=7,sd=5)
 mean(some_normals)</code></pre>
-<pre><code>## [1] 7.031204</code></pre>
+<pre><code>## [1] 6.888122</code></pre>
 <pre class="r"><code>(formula_se_of_mean &lt;- sd(some_normals)/sqrt(length(some_normals)))</code></pre>
-<pre><code>## [1] 0.5247049</code></pre>
+<pre><code>## [1] 0.5027518</code></pre>
 <pre class="r"><code>all.equal(formula_se_of_mean,mean.jackknife(some_normals))</code></pre>
 <pre><code>## [1] TRUE</code></pre>
 <pre class="r"><code>mean.jackknife(some_normals)</code></pre>
-<pre><code>## [1] 0.5247049</code></pre>
+<pre><code>## [1] 0.5027518</code></pre>
 
     </div>
   </div>
@@ -229,9 +229,6 @@ mean(some_normals)</code></pre>
 <div class="container">
   <nav>
   <ul class="pager">
-    
-    <li class="previous"><a href="https://zsi1.github.io/post/march-7-2017-pre-class-assignment/"><span
-      aria-hidden="true">&larr;</span> March 7, 2017-Pre-Class Assignment</a></li>
     
 
     
