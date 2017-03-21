@@ -398,13 +398,9 @@
 
   <div class="article-style" itemprop="articleBody">
     
-    <!-- BLOGDOWN-HEAD -->
-<!-- /BLOGDOWN-HEAD -->
-
-<!-- BLOGDOWN-BODY-BEFORE -->
-<!-- /BLOGDOWN-BODY-BEFORE -->
-
-
+    Jackknife for Gamma Parameters Recall our friend the method of moments estimator:
+gamma.est &lt;- function(the_data) { m &lt;- mean(the_data) v &lt;- var(the_data) a &lt;- m^2/v s &lt;- v/m return(c(a=a,s=s)) } Jackknife for Gamma Parameters Function Write a function called gamma.jackknife that takes argument a_vector and returns jackknife standard error estimates on the gamma parameters.
+gamma.jackknife &lt;- function(a_vector) { n1=length(a_vector) estimate_a=c(n1) estimate_s=c(n1) for(i in 1:n1) { estimate_a[i]=gamma.est(a_vector[-i])[1] estimate_s[i]=gamma.est(a_vector[-i])[2] } se_a=sqrt((var(estimate_a))*((n1-1)^2)/n1) se_s=sqrt((var(estimate_s))*((n1-1)^2)/n1) jackknife.
     
   </div>
   <p class="read-more">
@@ -423,15 +419,15 @@
   
   
   <h3 class="article-title" itemprop="name">
-    <a href="https://zsi1.github.io/post/feb-28-2016-in-class-project/" itemprop="url">Feb, 28, 2016 -In-Class Project</a>
+    <a href="https://zsi1.github.io/post/march-13-2017-pre-class/" itemprop="url">March-13-2017-Pre-Class</a>
   </h3>
   
 
 <div class="article-metadata">
 
   <span class="article-date">
-    <time datetime="2017-03-05 00:00:00 &#43;0000 UTC" itemprop="datePublished">
-      Sun, Mar 5, 2017
+    <time datetime="2017-03-20 00:00:00 &#43;0000 UTC" itemprop="datePublished">
+      Mon, Mar 20, 2017
     </time>
   </span>
 
@@ -445,12 +441,12 @@
 
   <div class="article-style" itemprop="articleBody">
     
-    1 ckm_nodes&lt;-read.csv(&quot;~/Desktop/Brown_Course/2560/ckm_nodes.csv&quot;,header = TRUE) dim(ckm_nodes) ## [1] 246 13 colnames(ckm_nodes) ## [1] &quot;city&quot; &quot;adoption_date&quot; ## [3] &quot;medical_school&quot; &quot;attend_meetings&quot; ## [5] &quot;medical_journals&quot; &quot;free_time_with&quot; ## [7] &quot;discuss_medicine_socially&quot; &quot;club_with_drs&quot; ## [9] &quot;drs_among_three_best_friends&quot; &quot;practicing_here&quot; ## [11] &quot;office_visits_per_week&quot; &quot;proximity_to_other_drs&quot; ## [13] &quot;specialty&quot; There are 246 rows and 13 columns in this ckm_nodes data file and there are columns named city and adoption_date.
- 2 table(ckm_nodes$adoption_date) ## ## 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 Inf ## 11 9 9 11 11 11 13 7 4 1 5 3 3 4 4 2 1 16 There are 16 doctors never prescribed.
+    1.a When a gambler makes a bet of $100 on a fair game, the result of this game follow bernoulli distribution with p=0.5. When we simulate the outcome at most 5000 iteration then the outcome follows a binomial distribution with n=5000, p=0.5.
+set.seed(2560) n&lt;-5000 inital&lt;-1000 dur&lt;-rep(NA,n) x&lt;-inital d&lt;-0 for (j in 1:n){ x&lt;-inital d&lt;-0 for (i in 1:n){ if(x!=0){ x&lt;-x+100*sample(c(-1,1),1,replace=TRUE,prob=c(0.5,0.5)) d&lt;-i }else{break} dur[j]&lt;-d }} dur&lt;-as.vector(dur) length1a&lt;-length(which(dur&lt;=100)) prob1a&lt;-length1a/n The probability that get busted by the time when we have placed one hundredth bet is 31.
     
   </div>
   <p class="read-more">
-    <a href="https://zsi1.github.io/post/feb-28-2016-in-class-project/" class="btn btn-primary btn-outline">
+    <a href="https://zsi1.github.io/post/march-13-2017-pre-class/" class="btn btn-primary btn-outline">
       CONTINUE READING
     </a>
   </p>

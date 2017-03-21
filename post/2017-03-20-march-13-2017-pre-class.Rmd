@@ -1,0 +1,385 @@
+---
+title: March-13-2017-Pre-Class
+date: '2017-03-20'
+slug: march-13-2017-pre-class
+---
+
+
+###1.a
+
+When a gambler makes a bet of $100 on a fair game, the result of this game follow bernoulli distribution with p=0.5. When we simulate the outcome at most 5000 iteration then the outcome follows a binomial distribution with n=5000, p=0.5. 
+
+```{r}
+set.seed(2560)
+n<-5000
+inital<-1000
+dur<-rep(NA,n)
+x<-inital
+d<-0
+
+for (j in 1:n){
+  x<-inital
+  d<-0
+for (i in 1:n){
+if(x!=0){
+x<-x+100*sample(c(-1,1),1,replace=TRUE,prob=c(0.5,0.5))
+d<-i
+}else{break}
+dur[j]<-d
+}}
+
+dur<-as.vector(dur)
+length1a<-length(which(dur<=100))
+prob1a<-length1a/n
+```
+
+The probability that get busted by the time when we have placed one hundredth bet is 31.34%.
+
+###1.b
+```{r}
+length1b<-length(which(dur<=500))
+prob1b<-length1b/n
+prob1b
+```
+
+The probability that get busted by the time when we have placed one hundredth bet is 65.32%
+
+###1.c
+```{r}
+dur.1c<-dur[!dur==5000]
+mean.time<-mean(dur.1c)
+mean.time
+```
+
+The mean time that go bust given go bust within the first 5000 hands is 506.204.
+
+###1.d
+```{r}
+set.seed(2560)
+bankroll.1d<-rep(NA,n)
+
+for (j in 1:n){
+  x<-inital
+for (i in 1:100){
+if(x!=0){
+x<-x+100*sample(c(-1,1),1,replace=TRUE,prob=c(0.5,0.5))
+}}
+bankroll.1d[j]<-x
+}
+
+mean1d<-mean(bankroll.1d)
+var1d<-var(bankroll.1d)
+```
+
+The mean of bankroll after 100 hands is `r mean1d`, and the variance of bankroll is `r var1d`. 
+
+###1.e
+```{r}
+set.seed(2560)
+bankroll.1e<-rep(NA,n)
+
+for (j in 1:n){
+  x<-inital
+for (i in 1:500){
+if(x!=0){
+x<-x+100*sample(c(-1,1),1,replace=TRUE,prob=c(0.5,0.5))
+}}
+bankroll.1e[j]<-x
+}
+
+mean1e<-mean(bankroll.1e,na.rm=T)
+mean1e
+var1e<-var(bankroll.1e)
+var1e
+```
+
+The mean of bankroll after 500 hands is `r mean1e `, and the variance of bankroll after 500 hands is `r var1e`.
+
+###2.a
+```{r}
+set.seed(2560)
+p<-18/38
+dur2<-rep(NA,n)
+
+for (j in 1:n){
+  x<-inital
+  d<-0
+for (i in 1:n){
+if(x!=0){
+x<-x+100*sample(c(-1,1),1,replace=TRUE,prob=c(1-p,p))
+d<-i
+}else{break()}}
+dur2[j]<-d
+}
+
+prob2a<-length(which(dur2<=100))/n
+prob2a
+```
+
+The probability that get busted by the time when we have placed one hundredth bet is `r prob2a`.
+
+
+###2.b
+```{r}
+prob2b<-length(which(dur2<=500))/n
+```
+
+The probability that get busted by the time when we have placed five hundredth bet is 91.9%.
+
+###2.c
+```{r}
+dur2.c<-dur2[!dur2==5000]
+mean.2c<-mean(dur2.c)
+```
+
+The mean time that go bust given go bust within the first 5000 hands is 186.622
+
+
+###2.d
+```{r}
+set.seed(2560)
+bankroll.2d<-rep(NA,n)
+
+for (j in 1:n){
+  x<-inital
+for (i in 1:100){
+if(x!=0){
+x<-x+100*sample(c(-1,1),1,replace=TRUE,prob=c(1-p,p))
+}}
+bankroll.2d[j]<-x
+}
+
+mean2d<-mean(bankroll.2d)
+var2d<-var(bankroll.2d)
+
+mean2d
+var2d
+```
+
+The mean of bankroll after 100 hands is `r mean2d`, and the variance of bankroll is `r var2d`.
+
+###2.e
+```{r}
+set.seed(2560)
+bankroll.2e<-rep(NA,n)
+
+for (j in 1:n){
+  x<-inital
+for (i in 1:500){
+if(x!=0){
+x<-x+100*sample(c(-1,1),1,replace=TRUE,prob=c(1-p,p))
+}}
+bankroll.2e[j]<-x
+}
+
+mean2e<-mean(bankroll.2e)
+var2e<-var(bankroll.2e)
+
+mean2e
+var2e
+```
+
+The mean of bankroll after 500 hands is `r mean2e`, and the variance of bankroll is `r var2e`.
+
+
+###3.a
+```{r}
+ini.win<-0.48
+p3<-ini.win
+prob3a<-rep(NA,100000)
+return<-rep(NA,100000)
+expected.return<-rep(NA,100)
+set.seed(2560)
+
+for (j in 1:100){
+for (i in 1:100000){
+first<-sample(c(-1,1),1,replace = TRUE,prob=c(1-p3,p3))
+return[i+1]<-return[i]+100*sample(c(-1,1),1,replace = TRUE,prob=c(1-p3,p3))
+#first.return<-100*first
+if (p3<1){
+  if(first==1){
+    p3<-p3+0.01
+  }else{p3<-ini.win}
+}else{p3=1}
+prob3a[i]<-p3
+}
+expected.return[j]<-return[100000] 
+  }
+mean.3a<-mean(expected.return)
+```
+
+It's not a fair game, the more hands a gambler play the more money he will lose on this game. 
+
+
+###3.b
+Suppose the probability of winning on first hand is 51%, and the rest probabilities are the same as previous. When the starting probability is 49% the game is becoming fair.
+```{r,eval=FALSE}
+p4<-0.51
+return2<-rep(NA,100000)
+expected.return2<-rep(NA,100)
+prob3b<-rep(NA,100000)
+
+for (j in 1:100){
+for (i in 1:100000){
+first<-sample(c(-1,1),1,replace = TRUE,prob=c(1-p4,p4))
+#return2[i+1]<-return2[i]+100*sample(c(-1,1),1,replace = TRUE,prob=c(1-p4,p4))
+if (p4<1){
+  if(first==1){
+    p4<-p4+0.01
+  }else{p4=0.51}
+}else{p4=1}
+prob3b[i]<-p4
+return2[1]<-100*first
+return2[i+1]<-return2[i]+100*sample(c(-1,1),1,replace = TRUE,prob=c(1-p4,p4))}
+expected.return2[j]<-return2[100000] 
+}
+mean.er2<-mean(expected.return2)
+
+
+#try set the starting probability to 50%
+p5<-0.5
+return3<-rep(NA,100000)
+expected.return3<-rep(NA,100)
+
+for (j in 1:100){
+for (i in 1:100000){
+first<-sample(c(-1,1),1,replace = TRUE,prob=c(1-p5,p5))
+#return2[i+1]<-return2[i]+100*sample(c(-1,1),1,replace = TRUE,prob=c(1-p4,p4))
+if (p5<1){
+  if(first==1){
+    p5<-p5+0.01
+  }else{p5=0.5}
+}else{p5=1}
+return3[1]<-100*first
+return3[i+1]<-return3[i]+100*sample(c(-1,1),1,replace = TRUE,prob=c(1-p5,p5))}
+expected.return3[j]<-return3[100000] 
+}
+
+mean.er3<-mean(expected.return3)
+```
+
+```{r}
+#try set the starting probability to 49%
+p6<-0.49
+return4<-rep(NA,100000)
+expected.return4<-rep(NA,100)
+
+for (j in 1:100){
+for (i in 1:100000){
+first<-sample(c(-1,1),1,replace = TRUE,prob=c(1-p6,p6))
+#return2[i+1]<-return2[i]+100*sample(c(-1,1),1,replace = TRUE,prob=c(1-p4,p4))
+if (p6<1){
+  if(first==1){
+    p6<-p6+0.01
+  }else{p6=0.49}
+}else{p6=1}
+return4[1]<-100*first
+return4[i+1]<-return4[i]+100*sample(c(-1,1),1,replace = TRUE,prob=c(1-p6,p6))}
+expected.return4[j]<-return4[100000] 
+}
+
+mean.er4<-mean(expected.return4)
+mean.er4
+```
+
+ 
+
+###3.c
+
+When set the increment probability at 2%, this game is becoming a fair game. 
+```{r}
+#set the increment probability to 1.5%
+set.seed(2560)
+p3<-0.48
+return5<-rep(NA,100000)
+expected.return5<-rep(NA,100)
+
+for (j in 1:100){
+for (i in 1:100000){
+first<-sample(c(-1,1),1,replace = TRUE,prob=c(1-p3,p3))
+if (p3<0.985){
+  if(first==1){
+    p3<-p3+0.015
+  }else{p3<-0.48}
+}else{p3==1}
+return5[1]<-100*first
+return5[i+1]<-return5[i]+100*sample(c(-1,1),1,replace = TRUE,prob=c(1-p3,p3))}
+expected.return5[j]<-return5[100000] 
+}
+mean(expected.return5)
+
+#set the increment probability to 2%
+p3<-0.48
+return6<-rep(NA,100000)
+expected.return6<-rep(NA,100)
+set.seed(2560)
+
+for (j in 1:100){
+for (i in 1:100000){
+first<-sample(c(-1,1),1,replace = TRUE,prob=c(1-p3,p3))
+if (p3<0.98){
+  if(first==1){
+    p3<-p3+0.02
+  }else{p3<-0.48}
+}else{p3==1}
+return6[1]<-100*first
+return6[i+1]<-return6[i]+100*sample(c(-1,1),1,replace = TRUE,prob=c(1-p3,p3))}
+expected.return6[j]<-return6[100000] 
+}
+
+mean(expected.return6)
+
+
+#set the increment probability to 1.55%
+
+p3<-0.48
+return7<-rep(NA,100000)
+expected.return7<-rep(NA,100)
+set.seed(2560)
+
+for (j in 1:100){
+for (i in 1:100000){
+first<-sample(c(-1,1),1,replace = TRUE,prob=c(1-p3,p3))
+if (first==1){
+  if(p3<0.9845){
+    p3<-p3+0.0155
+  } else {p3=1}
+}else{p3=0.48}
+ return7[1]<-100*first
+ return7[i+1]<-return7[i]+100*sample(c(-1,1),1,replace = TRUE,prob=c(1-p3,p3))}
+  expected.return7[j]<-return7[100000]
+  }
+mean(expected.return7)
+```
+
+
+###4
+```{r}
+set.seed(2560)
+B<-1000
+d1<-as.matrix(expected.return4)
+d1<-data.frame(d1)
+mean1<-rep(NA,100)
+for (i in 1:B){
+  n<-nrow(d1)
+  index1<-sample(1:n,size=n,replace=TRUE)
+  boot.data1<-d1[index1,]
+  mean1[i]<-mean(boot.data1)
+  }
+var4.1<-var(mean1)
+
+
+set.seed(2560)
+d2<-as.matrix(expected.return6)
+d2<-data.frame(d2)
+mean2<-rep(NA,100)
+for (i in 1:B){
+  n<-nrow(d2)
+  index2<-sample(1:n,size=n,replace=TRUE)
+  boot.data2<-d2[index2,]
+  mean2[i]<-mean(boot.data2)
+}
+var4.2<-var(mean2)
+```
+
+The variance of second game mean of return is 2614 and the variance of first game mean of return is 10228630. In general, the second game has a smaller variance in returns.

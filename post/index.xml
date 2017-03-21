@@ -21,7 +21,568 @@
 
 &lt;!-- BLOGDOWN-BODY-BEFORE --&gt;
 &lt;!-- /BLOGDOWN-BODY-BEFORE --&gt;
+&lt;div id=&#34;jackknife-for-gamma-parameters&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Jackknife for Gamma Parameters&lt;/h2&gt;
+&lt;p&gt;Recall our friend the method of moments estimator:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gamma.est &amp;lt;- function(the_data) {
+  m &amp;lt;- mean(the_data)
+  v &amp;lt;- var(the_data)
+  a &amp;lt;- m^2/v
+  s &amp;lt;- v/m
+  return(c(a=a,s=s))
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;jackknife-for-gamma-parameters-function&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Jackknife for Gamma Parameters Function&lt;/h3&gt;
+&lt;p&gt;Write a function called &lt;code&gt;gamma.jackknife&lt;/code&gt; that takes argument &lt;code&gt;a_vector&lt;/code&gt; and returns jackknife standard error estimates on the gamma parameters.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;gamma.jackknife &amp;lt;- function(a_vector) {
+  n1=length(a_vector)
+  estimate_a=c(n1)
+  estimate_s=c(n1)
+  for(i in 1:n1)
+  {
+    estimate_a[i]=gamma.est(a_vector[-i])[1]
+    estimate_s[i]=gamma.est(a_vector[-i])[2]
+  }
+  se_a=sqrt((var(estimate_a))*((n1-1)^2)/n1)
+  se_s=sqrt((var(estimate_s))*((n1-1)^2)/n1)
+  jackknife.stderrs=c(se_a,se_s)
+  return(jackknife.stderrs)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;jackknife-for-gamma-parameters-example&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Jackknife for Gamma Parameters Example&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;input &amp;lt;- rgamma(1000, shape=0.1, scale=10)
+gamma.est(input)
+gamma.jackknife(input)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;jackknife-for-linear-regression-coefficients&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Jackknife for linear regression coefficients&lt;/h2&gt;
+&lt;p&gt;Write a function called &lt;code&gt;jackknife.lm&lt;/code&gt; that takes arguments &lt;code&gt;df&lt;/code&gt;, &lt;code&gt;formula&lt;/code&gt; and &lt;code&gt;p&lt;/code&gt; and returns jackknife standard error estimates on the coefficients of a linear regression model.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;jackknife.lm &amp;lt;- function(df,formula,p) {
+ n=nrow(df)
+ jackknife.ests=matrix(0,nrow=p,ncol=n)
+ for (i in 1:n){
+   new.coefs=lm(as.formula(formula),data=df[-i,])$coefficients
+   jackknife.ests[,i]=new.coefs
+ }
+ var=apply(jackknife.ests,1,var)
+ jackknife.var=(n-1)^2/n*var
+ jackknife.stderr=sqrt(jackknife.var)
+  return(jackknife.stderr)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;jackknife-for-linear-regression-coefficients-example&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Jackknife for linear regression coefficients Example&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;output &amp;lt;- 1.2 + 0.6*input +  rnorm(1000, 0, 2.1)
+data &amp;lt;- data.frame(output,input)
+my.lm &amp;lt;- lm(output~input, data=data)
+coefficients(my.lm)
+# &amp;quot;Official&amp;quot; standard errors
+sqrt(diag(vcov(my.lm)))
+jackknife.lm(df=data,formula=&amp;quot;output~input&amp;quot;,p=2)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;refactoring-the-jackknife&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Refactoring the Jackknife&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Omitting one point or row is a common sub-task&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The general pattern:&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;figure out the size of the data
+for each case
+   omit that case
+   repeat some estimation and get a vector of numbers
+take variances across cases
+scale up variances
+take the square roots&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Refactor by extracting the common “omit one” operation&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Refactor by defining a general “jackknife” operation&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div id=&#34;the-common-operation&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;The Common Operation&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;em&gt;Problem&lt;/em&gt;: Omit one particular data point from a larger structure&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;em&gt;Difficulty&lt;/em&gt;: Do we need a comma in the index or not?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;em&gt;Solution&lt;/em&gt;: Works for vectors, lists, 1D and 2D arrays, matrices, data frames:&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;goal&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Goal:&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Make the function select the correct dimensions
+&lt;ul&gt;
+&lt;li&gt;length for a 1d object&lt;/li&gt;
+&lt;li&gt;number of rows for 2d&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Write a function &lt;code&gt;omit.case&lt;/code&gt; that omits a point given the data and returns the data minus that point. Make sure it can handle higher dimensions.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;      omit.case &amp;lt;- function(the_data,omitted_point) {
+    # This should take the data and omit one point at a time and return the new data
+        dim=data(the_data)
+        if (is.null(dim)||length(dim)==1){
+          return(the_data[-omitted_point])
+        }else{
+          return(the_data[-omitted_point,])
+        }
+        }&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Write a function &lt;code&gt;omit_and_est&lt;/code&gt; that takes the data with an omitted point and returns whatever function your estimator does.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;    omit_and_est &amp;lt;- function(omit) {
+          # This function should take the output of omit.case and use it as input for the estimator
+       estimator(omit.case(the_data,omit))
 
+    }&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;jackknife &amp;lt;- function(estimator,the_data) {
+  
+  if(is.null(dim(the_data))){
+    n=length(the_data)
+  }else{
+    n=nrow(the_data)
+  }
+  omit_and_est &amp;lt;- function(omit) {
+              # This function should take the output of omit.case and use it as input for the estimator
+           estimator(omit.case(the_data,omit))
+          
+        }
+  
+  
+  jackknife.ests &amp;lt;- matrix(sapply(1:n, omit_and_est), ncol=n)
+  var.of.reestimates &amp;lt;- apply(jackknife.ests,1,var)
+  jackknife.var &amp;lt;- ((n-1)^2/n)* var.of.reestimates
+  jackknife.stderr &amp;lt;- sqrt(jackknife.var)
+  return(jackknife.stderr)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;div id=&#34;it-works&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;It works&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mean.jackknife &amp;lt;- function(a_vector) {
+  a&amp;lt;-rep(0,length(a_vector))
+  for (i in 1:length(a_vector)){
+    a[i]&amp;lt;-mean(a_vector[-i])
+  }
+  jackknife.variance&amp;lt;-((length(a_vector) - 1)/length(a_vector)) * sum((a - mean(a))^2)
+  jackknife.stderr&amp;lt;-sqrt(jackknife.variance)
+  return(jackknife.stderr)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;some_normals=rnorm(100,mean=7,sd=5)
+jackknife(estimator=mean,the_data=some_normals)
+all.equal(jackknife(estimator=mean,the_data=some_normals),
+          mean.jackknife(some_normals))&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all.equal(jackknife(estimator=gamma.est,the_data=data$input),
+          gamma.jackknife(data$input))&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all.equal(jackknife(estimator=gamma.est,the_data=data$input),
+          gamma.jackknife(data$input), check.names=FALSE)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;est.coefs &amp;lt;- function(the_data) {
+  return(lm(output~input,data=the_data)$coefficients)
+}
+est.coefs(data)
+all.equal(est.coefs(data), coefficients(my.lm))&lt;/code&gt;&lt;/pre&gt;
+&lt;hr /&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;jackknife(estimator=est.coefs,the_data=data)
+all.equal(jackknife(estimator=est.coefs,the_data=data),
+          jackknife.lm(df=data,formula=&amp;quot;output~input&amp;quot;,p=2))&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;further-refactoring-of-jackknife&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Further Refactoring of jackknife()&lt;/h2&gt;
+&lt;p&gt;The code for &lt;code&gt;jackknife()&lt;/code&gt; is still a bit clunky: - Ugly &lt;code&gt;if-else&lt;/code&gt; for finding &lt;code&gt;n&lt;/code&gt; - Bit at the end for scaling variances down to standard errors&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;write a function that calculates the &lt;code&gt;n&lt;/code&gt; needed for the above code:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;  data_size &amp;lt;- function(the_data) {
+if (is.null(dim(the_data))){
+  n=length(the_data)
+}else{
+  n=nrow(the_data)
+}
+
+  }&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Write a funcrion that calculate the variance of all the estimates and returns the standard error&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;scale_and_sqrt_vars &amp;lt;- function(jackknife.ests,n) {
+  var=apply(jackknife.ests,1,var)
+  jackknife.var=(n-1)^2/n*var
+  jackknife.stderr=sqrt(jackknife.var)
+  return(jackknife.stderr)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;now-invoke-those-functions&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Now invoke those functions&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;jackknife &amp;lt;- function(estimator,the_data) {
+  n &amp;lt;- data_size(the_data)
+  omit_and_est &amp;lt;- function(omit) {
+    estimator(omit.case(the_data,omit))
+  }
+  jackknife.ests &amp;lt;- matrix(sapply(1:n, omit_and_est), ncol=n)
+  return(scale_and_sqrt_vars(jackknife.ests,n))
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>March-13-2017-Pre-Class</title>
+      <link>https://zsi1.github.io/post/march-13-2017-pre-class/</link>
+      <pubDate>Mon, 20 Mar 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://zsi1.github.io/post/march-13-2017-pre-class/</guid>
+      <description>&lt;!-- BLOGDOWN-HEAD --&gt;
+&lt;!-- /BLOGDOWN-HEAD --&gt;
+
+&lt;!-- BLOGDOWN-BODY-BEFORE --&gt;
+&lt;!-- /BLOGDOWN-BODY-BEFORE --&gt;
+&lt;div id=&#34;a&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;1.a&lt;/h3&gt;
+&lt;p&gt;When a gambler makes a bet of $100 on a fair game, the result of this game follow bernoulli distribution with p=0.5. When we simulate the outcome at most 5000 iteration then the outcome follows a binomial distribution with n=5000, p=0.5.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(2560)
+n&amp;lt;-5000
+inital&amp;lt;-1000
+dur&amp;lt;-rep(NA,n)
+x&amp;lt;-inital
+d&amp;lt;-0
+
+for (j in 1:n){
+  x&amp;lt;-inital
+  d&amp;lt;-0
+for (i in 1:n){
+if(x!=0){
+x&amp;lt;-x+100*sample(c(-1,1),1,replace=TRUE,prob=c(0.5,0.5))
+d&amp;lt;-i
+}else{break}
+dur[j]&amp;lt;-d
+}}
+
+dur&amp;lt;-as.vector(dur)
+length1a&amp;lt;-length(which(dur&amp;lt;=100))
+prob1a&amp;lt;-length1a/n&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The probability that get busted by the time when we have placed one hundredth bet is 31.34%.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;b&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;1.b&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;length1b&amp;lt;-length(which(dur&amp;lt;=500))
+prob1b&amp;lt;-length1b/n
+prob1b&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 0.6532&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The probability that get busted by the time when we have placed one hundredth bet is 65.32%&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;c&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;1.c&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dur.1c&amp;lt;-dur[!dur==5000]
+mean.time&amp;lt;-mean(dur.1c)
+mean.time&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 506.204&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The mean time that go bust given go bust within the first 5000 hands is 506.204.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;d&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;1.d&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(2560)
+bankroll.1d&amp;lt;-rep(NA,n)
+
+for (j in 1:n){
+  x&amp;lt;-inital
+for (i in 1:100){
+if(x!=0){
+x&amp;lt;-x+100*sample(c(-1,1),1,replace=TRUE,prob=c(0.5,0.5))
+}}
+bankroll.1d[j]&amp;lt;-x
+}
+
+mean1d&amp;lt;-mean(bankroll.1d)
+var1d&amp;lt;-var(bankroll.1d)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The mean of bankroll after 100 hands is 989.96, and the variance of bankroll is 8.482528510^{5}.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;e&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;1.e&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(2560)
+bankroll.1e&amp;lt;-rep(NA,n)
+
+for (j in 1:n){
+  x&amp;lt;-inital
+for (i in 1:500){
+if(x!=0){
+x&amp;lt;-x+100*sample(c(-1,1),1,replace=TRUE,prob=c(0.5,0.5))
+}}
+bankroll.1e[j]&amp;lt;-x
+}
+
+mean1e&amp;lt;-mean(bankroll.1e,na.rm=T)
+mean1e&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 1004.56&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;var1e&amp;lt;-var(bankroll.1e)
+var1e&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 2732622&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The mean of bankroll after 500 hands is 1004.56, and the variance of bankroll after 500 hands is 2.732621710^{6}.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;a-1&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;2.a&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(2560)
+p&amp;lt;-18/38
+dur2&amp;lt;-rep(NA,n)
+
+for (j in 1:n){
+  x&amp;lt;-inital
+  d&amp;lt;-0
+for (i in 1:n){
+if(x!=0){
+x&amp;lt;-x+100*sample(c(-1,1),1,replace=TRUE,prob=c(1-p,p))
+d&amp;lt;-i
+}else{break()}}
+dur2[j]&amp;lt;-d
+}
+
+prob2a&amp;lt;-length(which(dur2&amp;lt;=100))/n
+prob2a&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 0.5034&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The probability that get busted by the time when we have placed one hundredth bet is 0.5034.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;b-1&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;2.b&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;prob2b&amp;lt;-length(which(dur2&amp;lt;=500))/n&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The probability that get busted by the time when we have placed five hundredth bet is 91.9%.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;c-1&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;2.c&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;dur2.c&amp;lt;-dur2[!dur2==5000]
+mean.2c&amp;lt;-mean(dur2.c)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The mean time that go bust given go bust within the first 5000 hands is 186.622&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;d-1&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;2.d&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(2560)
+bankroll.2d&amp;lt;-rep(NA,n)
+
+for (j in 1:n){
+  x&amp;lt;-inital
+for (i in 1:100){
+if(x!=0){
+x&amp;lt;-x+100*sample(c(-1,1),1,replace=TRUE,prob=c(1-p,p))
+}}
+bankroll.2d[j]&amp;lt;-x
+}
+
+mean2d&amp;lt;-mean(bankroll.2d)
+var2d&amp;lt;-var(bankroll.2d)
+
+mean2d&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 608.72&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;var2d&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 597547.5&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The mean of bankroll after 100 hands is 608.72, and the variance of bankroll is 5.975474710^{5}.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;e-1&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;2.e&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(2560)
+bankroll.2e&amp;lt;-rep(NA,n)
+
+for (j in 1:n){
+  x&amp;lt;-inital
+for (i in 1:500){
+if(x!=0){
+x&amp;lt;-x+100*sample(c(-1,1),1,replace=TRUE,prob=c(1-p,p))
+}}
+bankroll.2e[j]&amp;lt;-x
+}
+
+mean2e&amp;lt;-mean(bankroll.2e)
+var2e&amp;lt;-var(bankroll.2e)
+
+mean2e&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 167.6&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;var2e&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 400342.3&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The mean of bankroll after 500 hands is 167.6, and the variance of bankroll is 4.003423110^{5}.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;a-2&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;3.a&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ini.win&amp;lt;-0.48
+p3&amp;lt;-ini.win
+prob3a&amp;lt;-rep(NA,100000)
+return&amp;lt;-rep(NA,100000)
+expected.return&amp;lt;-rep(NA,100)
+set.seed(2560)
+
+for (j in 1:100){
+for (i in 1:100000){
+first&amp;lt;-sample(c(-1,1),1,replace = TRUE,prob=c(1-p3,p3))
+return[i+1]&amp;lt;-return[i]+100*sample(c(-1,1),1,replace = TRUE,prob=c(1-p3,p3))
+#first.return&amp;lt;-100*first
+if (p3&amp;lt;1){
+  if(first==1){
+    p3&amp;lt;-p3+0.01
+  }else{p3&amp;lt;-ini.win}
+}else{p3=1}
+prob3a[i]&amp;lt;-p3
+}
+expected.return[j]&amp;lt;-return[100000] 
+  }
+mean.3a&amp;lt;-mean(expected.return)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It’s not a fair game, the more hands a gambler play the more money he will lose on this game.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;b-2&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;3.b&lt;/h3&gt;
+&lt;p&gt;Suppose the probability of winning on first hand is 51%, and the rest probabilities are the same as previous. When the starting probability is 49% the game is becoming fair.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;p4&amp;lt;-0.51
+return2&amp;lt;-rep(NA,100000)
+expected.return2&amp;lt;-rep(NA,100)
+prob3b&amp;lt;-rep(NA,100000)
+
+for (j in 1:100){
+for (i in 1:100000){
+first&amp;lt;-sample(c(-1,1),1,replace = TRUE,prob=c(1-p4,p4))
+#return2[i+1]&amp;lt;-return2[i]+100*sample(c(-1,1),1,replace = TRUE,prob=c(1-p4,p4))
+if (p4&amp;lt;1){
+  if(first==1){
+    p4&amp;lt;-p4+0.01
+  }else{p4=0.51}
+}else{p4=1}
+prob3b[i]&amp;lt;-p4
+return2[1]&amp;lt;-100*first
+return2[i+1]&amp;lt;-return2[i]+100*sample(c(-1,1),1,replace = TRUE,prob=c(1-p4,p4))}
+expected.return2[j]&amp;lt;-return2[100000] 
+}
+mean.er2&amp;lt;-mean(expected.return2)
+
+
+#try set the starting probability to 50%
+p5&amp;lt;-0.5
+return3&amp;lt;-rep(NA,100000)
+expected.return3&amp;lt;-rep(NA,100)
+
+for (j in 1:100){
+for (i in 1:100000){
+first&amp;lt;-sample(c(-1,1),1,replace = TRUE,prob=c(1-p5,p5))
+#return2[i+1]&amp;lt;-return2[i]+100*sample(c(-1,1),1,replace = TRUE,prob=c(1-p4,p4))
+if (p5&amp;lt;1){
+  if(first==1){
+    p5&amp;lt;-p5+0.01
+  }else{p5=0.5}
+}else{p5=1}
+return3[1]&amp;lt;-100*first
+return3[i+1]&amp;lt;-return3[i]+100*sample(c(-1,1),1,replace = TRUE,prob=c(1-p5,p5))}
+expected.return3[j]&amp;lt;-return3[100000] 
+}
+
+mean.er3&amp;lt;-mean(expected.return3)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#try set the starting probability to 49%
+p6&amp;lt;-0.49
+return4&amp;lt;-rep(NA,100000)
+expected.return4&amp;lt;-rep(NA,100)
+
+for (j in 1:100){
+for (i in 1:100000){
+first&amp;lt;-sample(c(-1,1),1,replace = TRUE,prob=c(1-p6,p6))
+#return2[i+1]&amp;lt;-return2[i]+100*sample(c(-1,1),1,replace = TRUE,prob=c(1-p4,p4))
+if (p6&amp;lt;1){
+  if(first==1){
+    p6&amp;lt;-p6+0.01
+  }else{p6=0.49}
+}else{p6=1}
+return4[1]&amp;lt;-100*first
+return4[i+1]&amp;lt;-return4[i]+100*sample(c(-1,1),1,replace = TRUE,prob=c(1-p6,p6))}
+expected.return4[j]&amp;lt;-return4[100000] 
+}
+
+mean.er4&amp;lt;-mean(expected.return4)
+mean.er4&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 16474&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;c-2&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;3.c&lt;/h3&gt;
+&lt;p&gt;When set the increment probability at 2%, this game is becoming a fair game.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#set the increment probability to 1.5%
+set.seed(2560)
+p3&amp;lt;-0.48
+return5&amp;lt;-rep(NA,100000)
+expected.return5&amp;lt;-rep(NA,100)
+
+for (j in 1:100){
+for (i in 1:100000){
+first&amp;lt;-sample(c(-1,1),1,replace = TRUE,prob=c(1-p3,p3))
+if (p3&amp;lt;0.985){
+  if(first==1){
+    p3&amp;lt;-p3+0.015
+  }else{p3&amp;lt;-0.48}
+}else{p3==1}
+return5[1]&amp;lt;-100*first
+return5[i+1]&amp;lt;-return5[i]+100*sample(c(-1,1),1,replace = TRUE,prob=c(1-p3,p3))}
+expected.return5[j]&amp;lt;-return5[100000] 
+}
+mean(expected.return5)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 9726258&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#set the increment probability to 2%
+p3&amp;lt;-0.48
+return6&amp;lt;-rep(NA,100000)
+expected.return6&amp;lt;-rep(NA,100)
+set.seed(2560)
+
+for (j in 1:100){
+for (i in 1:100000){
+first&amp;lt;-sample(c(-1,1),1,replace = TRUE,prob=c(1-p3,p3))
+if (p3&amp;lt;0.98){
+  if(first==1){
+    p3&amp;lt;-p3+0.02
+  }else{p3&amp;lt;-0.48}
+}else{p3==1}
+return6[1]&amp;lt;-100*first
+return6[i+1]&amp;lt;-return6[i]+100*sample(c(-1,1),1,replace = TRUE,prob=c(1-p3,p3))}
+expected.return6[j]&amp;lt;-return6[100000] 
+}
+
+mean(expected.return6)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 9591612&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;#set the increment probability to 1.55%
+
+p3&amp;lt;-0.48
+return7&amp;lt;-rep(NA,100000)
+expected.return7&amp;lt;-rep(NA,100)
+set.seed(2560)
+
+for (j in 1:100){
+for (i in 1:100000){
+first&amp;lt;-sample(c(-1,1),1,replace = TRUE,prob=c(1-p3,p3))
+if (first==1){
+  if(p3&amp;lt;0.9845){
+    p3&amp;lt;-p3+0.0155
+  } else {p3=1}
+}else{p3=0.48}
+ return7[1]&amp;lt;-100*first
+ return7[i+1]&amp;lt;-return7[i]+100*sample(c(-1,1),1,replace = TRUE,prob=c(1-p3,p3))}
+  expected.return7[j]&amp;lt;-return7[100000]
+  }
+mean(expected.return7)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 9924696&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;section&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;4&lt;/h3&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;set.seed(2560)
+B&amp;lt;-1000
+d1&amp;lt;-as.matrix(expected.return4)
+d1&amp;lt;-data.frame(d1)
+mean1&amp;lt;-rep(NA,100)
+for (i in 1:B){
+  n&amp;lt;-nrow(d1)
+  index1&amp;lt;-sample(1:n,size=n,replace=TRUE)
+  boot.data1&amp;lt;-d1[index1,]
+  mean1[i]&amp;lt;-mean(boot.data1)
+  }
+var4.1&amp;lt;-var(mean1)
+
+
+set.seed(2560)
+d2&amp;lt;-as.matrix(expected.return6)
+d2&amp;lt;-data.frame(d2)
+mean2&amp;lt;-rep(NA,100)
+for (i in 1:B){
+  n&amp;lt;-nrow(d2)
+  index2&amp;lt;-sample(1:n,size=n,replace=TRUE)
+  boot.data2&amp;lt;-d2[index2,]
+  mean2[i]&amp;lt;-mean(boot.data2)
+}
+var4.2&amp;lt;-var(mean2)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The variance of second game mean of return is 2614 and the variance of first game mean of return is 10228630. In general, the second game has a smaller variance in returns.&lt;/p&gt;
+&lt;/div&gt;
 </description>
     </item>
     
@@ -196,13 +757,13 @@ est.jackknife&amp;lt;-rep(NA,length(x))
 }&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;some_normals &amp;lt;- rnorm(100,mean=7,sd=5)
 mean(some_normals)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 6.888122&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 6.699633&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;(formula_se_of_mean &amp;lt;- sd(some_normals)/sqrt(length(some_normals)))&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 0.5027518&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 0.4880029&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;all.equal(formula_se_of_mean,mean.jackknife(some_normals))&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;## [1] TRUE&lt;/code&gt;&lt;/pre&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;mean.jackknife(some_normals)&lt;/code&gt;&lt;/pre&gt;
-&lt;pre&gt;&lt;code&gt;## [1] 0.5027518&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 0.4880029&lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>
     
